@@ -15,62 +15,68 @@ export class HomePage {
 
   map: any;
   mapInitialised: boolean = false;
-  apiKey: any;
+  apiKey: 'AIzaSyDwCMeEpZWGWPIgmzaGxGj7D4odnXZQVkE';
 
   constructor(public nav: NavController, public connectivityService: ConnectivityService) {
     this.loadGoogleMaps();
   }
 
-  loadGoogleMaps(){
+  loadGoogleMaps() {
 
     this.addConnectivityListeners();
 
-  if(typeof google == "undefined" || typeof google.maps == "undefined"){
+    if (typeof google == "undefined" || typeof google.maps == "undefined") {
 
-    console.log("Google maps JavaScript needs to be loaded.");
-    this.disableMap();
+      console.log("Google maps JavaScript needs to be loaded.");
+      this.disableMap();
 
-    if(this.connectivityService.isOnline()){
-      console.log("online, loading map");
+      if (this.connectivityService.isOnline()) {
+        console.log("online, loading map");
 
-      //Load the SDK
-      window['mapInit'] = () => {
+        //Load the SDK
+        window['mapInit'] = () => {
+          this.initMap();
+          this.enableMap();
+        }
+
+        let script = document.createElement("script");
+        script.id = "googleMaps";
+        script.async = true;
+        script.defer = true;
+        if (this.apiKey) {
+          script.src = 'http://maps.google.com/maps/api/js?key=' + this.apiKey + '&callback=mapInit&libraries=places,geometry,drawing';
+        } else {
+          script.src = 'http://maps.google.com/maps/api/js?callback=mapInit&libraries=places,geometry,drawing';
+        }
+
+        document.body.appendChild(script);
+
+      }
+    } else {
+
+      if (this.connectivityService.isOnline()) {
+        console.log("showing map");
         this.initMap();
         this.enableMap();
-      }
-
-      let script = document.createElement("script");
-      script.id = "googleMaps";
-
-      if(this.apiKey){
-        script.src = 'http://maps.google.com/maps/api/js?key=' + this.apiKey + '&callback=mapInit';
       } else {
-        script.src = 'http://maps.google.com/maps/api/js?callback=mapInit';
+        console.log("disabling map");
+        this.disableMap();
       }
 
-      document.body.appendChild(script);
-
-    }
-  }
-  else {
-
-    if(this.connectivityService.isOnline()){
-      console.log("showing map");
-      this.initMap();
-      this.enableMap();
-    }
-    else {
-      console.log("disabling map");
-      this.disableMap();
     }
 
   }
 
-  }
-
-  initMap(){
-
+  initMap() {
     this.mapInitialised = true;
+    var placeService = new google.maps.places.PlacesService(this.map);
+    console.log(placeService);
+    var streetService = new google.maps.StreetViewService();
+    console.log(streetService);
+    var directionsService = new google.maps.DirectionsService();
+    console.log(directionsService)
+    var infoWindow = new google.maps.InfoWindow({});
+    var bounds = new google.maps.LatLngBounds();
 
     Geolocation.getCurrentPosition().then((position) => {
 
@@ -88,26 +94,26 @@ export class HomePage {
 
   }
 
-  disableMap(){
+  disableMap() {
     console.log("disable map");
   }
 
-  enableMap(){
+  enableMap() {
     console.log("enable map");
   }
 
-  addConnectivityListeners(){
+  addConnectivityListeners() {
 
     let onOnline = () => {
 
       setTimeout(() => {
-        if(typeof google == "undefined" || typeof google.maps == "undefined"){
+        if (typeof google == "undefined" || typeof google.maps == "undefined") {
 
           this.loadGoogleMaps();
 
         } else {
 
-          if(!this.mapInitialised){
+          if (!this.mapInitialised) {
             this.initMap();
           }
 
