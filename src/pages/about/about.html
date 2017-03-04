@@ -1,11 +1,22 @@
 <ion-header>
-  <ion-navbar>
+  <ion-navbar color='primary'>
     <ion-title>
       About
     </ion-title>
   </ion-navbar>
 </ion-header>
-
 <ion-content padding>
-
+  <ion-list>
+    <ion-item>
+      <ion-label floating >Username</ion-label>
+      <ion-input type="text" value=""></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>Password</ion-label>
+      <ion-input type="password" value=""></ion-input>
+    </ion-item>
+  </ion-list>
+  <div padding>
+    <button ion-button color="secondary" block>Sign In</button>
+  </div>
 </ion-content>
